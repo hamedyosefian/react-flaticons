@@ -1,0 +1,19 @@
+{
+  "name": "react-flaticons",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamedyosefian/react-flaticons.git"
+  },
+  "author": "hamedyousefian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hamedyosefian/react-flaticons/issues"
+  },
+  "homepage": "https://github.com/hamedyosefian/react-flaticons#readme"
+}
