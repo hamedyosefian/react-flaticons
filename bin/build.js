@@ -5,8 +5,6 @@ const fs = require('fs');
 const format = require('prettier-eslint');
 const upperCamelCase = require('uppercamelcase');
 
-// const featherIcons = require('feather-icons/dist/icons.json');
-
 const rootDir = path.join(__dirname, '..');
 
 const svgDir = path.join(rootDir, 'src/svgs');
@@ -16,14 +14,6 @@ const iconDir = path.join(rootDir, 'src/icons');
 if (!fs.existsSync(iconDir)) {
   fs.mkdirSync(iconDir);
 }
-
-// const icons = Object.keys(featherIcons);
-
-// const dir = path.join(rootDir, 'src/icons');
-
-// if (!fs.existsSync(dir)) {
-//   fs.mkdirSync(dir);
-// }
 
 const initialTypeDefinitions = `/// <reference types="react" />
 import { FC, SVGAttributes } from 'react';
@@ -43,23 +33,17 @@ fs.writeFileSync(
   'utf-8',
 );
 
-const attrsToString = (attrs) => {
-  return Object.keys(attrs).map((key) => {
-    if (key === 'width' || key === 'height' || key === 'stroke') {
-      return key + '={' + attrs[key] + '}';
-    }
-    if (key === 'rest') {
-      return '{...rest}';
-    }
-    return key + '="' + attrs[key] + '"';
-  }).join(' ');
-};
-
+const attrsToString = (attrs) => Object.keys(attrs).map((key) => {
+  if (['width', 'height', 'stroke'].includes(key)) {
+    return `${key}={${attrs[key]}}`;
+  }
+  if (key === 'rest') {
+    return '{...rest}';
+  }
+  return `${key}="${attrs[key]}"`;
+}).join(' ');
 
 fs.readdirSync(svgDir).filter((f) => f !== '.DS_Store').forEach((file) => {
-  // const location = path.join(rootDir, 'src/icons', `${i}.js`);
-  // const ComponentName = (i === 'github') ? 'GitHub' : upperCamelCase(i);
-
   const svg = fs.readFileSync(path.join(svgDir, file), 'utf-8');
   const iconName = path.parse(file).name;
   const location = path.join(iconDir, `${iconName}.js`);
@@ -70,26 +54,19 @@ fs.readdirSync(svgDir).filter((f) => f !== '.DS_Store').forEach((file) => {
     width: 'size',
     height: 'size',
     viewBox: '0 0 24 24',
-    // fill: 'none',
-    // stroke: 'color',
-    // strokeWidth: 2,
-    // strokeLinecap: 'round',
-    // strokeLinejoin: 'round',
+    fill: 'currentColor',
     rest: '...rest',
   };
 
   const element = `
-    import React, {forwardRef} from 'react';
+    import React, { forwardRef } from 'react';
     import PropTypes from 'prop-types';
 
-    const ${ComponentName} = forwardRef(({ color = 'currentColor', size = 24, ...rest }, ref) => {
-      return (
-        <svg ref={ref} ${attrsToString(defaultAttrs)}>
-          ${svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i)[1]}
-        </svg>
-      )
-
-    });
+    const ${ComponentName} = forwardRef(({ color = 'currentColor', size = '20px', ...rest }, ref) => (
+      <svg ref={ref} ${attrsToString(defaultAttrs)}>
+        ${svg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/i)[1]}
+      </svg>
+    ));
 
     ${ComponentName}.propTypes = {
       color: PropTypes.string,
@@ -101,7 +78,7 @@ fs.readdirSync(svgDir).filter((f) => f !== '.DS_Store').forEach((file) => {
 
     ${ComponentName}.displayName = '${ComponentName}'
 
-    export default ${ComponentName}
+    export default ${ComponentName};
   `;
 
   const component = format({
@@ -118,7 +95,7 @@ fs.readdirSync(svgDir).filter((f) => f !== '.DS_Store').forEach((file) => {
 
   fs.writeFileSync(location, component, 'utf-8');
 
-  console.log('Successfully built', ComponentName);
+  console.log(`Successfully built ${ComponentName}`);
 
   const exportString = `export { default as ${ComponentName} } from './icons/${iconName}';\r\n`;
   fs.appendFileSync(
