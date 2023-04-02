@@ -6,7 +6,7 @@ export default {
     file: 'build/index.js',
     format: 'cjs',
   },
-  external: ['react', 'prop-types'],
+  external: ['react', 'react-dom', 'prop-types'],
   plugins: [
     babel({
       exclude: 'node_modules/**',

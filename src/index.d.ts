@@ -1,12 +1,21 @@
 /// <reference types="react" />
-import { FC, SVGAttributes } from 'react';
+import { FC, SVGAttributes , CSSProperties, Context} from 'react';
 
 export interface IconProps extends SVGAttributes<SVGElement> {
   color?: string;
   size?: string | number;
 }
 
+export interface IconContextInterface{
+  color?: string;
+  size?: string;
+  className?: string;
+  style?: CSSProperties;
+  attr?: SVGAttributes<SVGElement>;
+}
+
 export type Icon = FC<IconProps>;
+export const IconContext: Context<IconContextInterface>;
 export const A: Icon;
 export const Ad: Icon;
 export const AddDocument: Icon;

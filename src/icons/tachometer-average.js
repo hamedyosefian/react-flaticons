@@ -1,19 +1,29 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useContext } from 'react';
 import PropTypes from 'prop-types';
+import IconContext from '../context';
 
-const TachometerAverage = forwardRef(({ color = 'currentColor', size = '20px', ...rest }, ref) => (
-  <svg
-    ref={ref}
-    xmlns="http://www.w3.org/2000/svg"
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    {...rest}
-  >
-    <path d="M14 13a2 2 0 1 1-3-1.732V6a1 1 0 0 1 2 0v5.268A2 2 0 0 1 14 13Zm6-8.948A12 12 0 0 0 3.555 21.516a3.016 3.016 0 0 0 4.073.129l1.026-.888a1 1 0 0 0-1.308-1.514l-1.027.889a1 1 0 0 1-1.357-.038 10 10 0 1 1 14.114-.037 1.018 1.018 0 0 1-1.395.074l-1.027-.888a1 1 0 0 0-1.308 1.514l1.027.887a3.034 3.034 0 0 0 4.118-.174A12.057 12.057 0 0 0 20 4.052Z" />
-  </svg>
-));
+const TachometerAverage = forwardRef(({ color, size, ...rest }, ref) => {
+  const iconContext = useContext(IconContext);
+
+  const mergedProps = {
+    color: color ?? iconContext.color ?? 'currentColor',
+    size: size ?? iconContext.size ?? '20px',
+    ...rest,
+  };
+  return (
+    <svg
+      ref={ref}
+      xmlns="http://www.w3.org/2000/svg"
+      width={mergedProps.size}
+      height={mergedProps.size}
+      viewBox="0 0 24 24"
+      fill={mergedProps.color}
+      {...mergedProps}
+    >
+      <path d="M14 13a2 2 0 1 1-3-1.732V6a1 1 0 0 1 2 0v5.268A2 2 0 0 1 14 13Zm6-8.948A12 12 0 0 0 3.555 21.516a3.016 3.016 0 0 0 4.073.129l1.026-.888a1 1 0 0 0-1.308-1.514l-1.027.889a1 1 0 0 1-1.357-.038 10 10 0 1 1 14.114-.037 1.018 1.018 0 0 1-1.395.074l-1.027-.888a1 1 0 0 0-1.308 1.514l1.027.887a3.034 3.034 0 0 0 4.118-.174A12.057 12.057 0 0 0 20 4.052Z" />
+    </svg>
+  );
+});
 
 TachometerAverage.propTypes = {
   color: PropTypes.string,

@@ -1,6 +1,6 @@
 {
   "name": "react-flaticons",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "",
   "main": "build/index.js",
   "module": "dist/index.js",
@@ -52,9 +52,10 @@
     "uppercamelcase": "^3.0.0"
   },
   "peerDependencies": {
-    "react": ">=16.8.6"
+    "react": "^18.2.0"
   },
   "dependencies": {
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "react-dom": "^18.2.0"
   }
 }

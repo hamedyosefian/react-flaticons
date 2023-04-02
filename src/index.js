@@ -1,3 +1,4 @@
+export { default as IconContext } from './context';
 export { default as A } from './icons/a';
 export { default as Ad } from './icons/ad';
 export { default as AddDocument } from './icons/add-document';
