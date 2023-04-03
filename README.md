@@ -1,6 +1,12 @@
-# React Flaticons
 
-![React Flaticons Logo](https://media.flaticon.com/dist/min/img/logo/flaticon_negative.svg)
+
+[//]: # (![React Flaticons Logo]&#40;https://media.flaticon.com/dist/min/img/logo/flaticon_negative.svg&#41;)
+![flaticon.svg](flaticon.svg)
+
+React Flaticons
+------------
+![npm version](https://badge.fury.io/js/react-flaticons.svg)
+
 
 ### 🎉 Icon fonts for any project, big or small!
 
@@ -25,11 +31,6 @@ React Flaticons was designed with developers in mind, making it easy to use and 
 ### 🤝 Join our community!
 
 Join our community of developers on GitHub and contribute to the ongoing development of React Flaticons.
-
-
-
-
-![npm version](https://badge.fury.io/js/react-flaticons.svg)
 
 
 Installation
