@@ -36,6 +36,7 @@
   },
   "homepage": "https://github.com/hamedyosefian/react-flaticons#readme",
   "dependencies": {
+    "jszip": "^3.10.1",
     "opentype.js": "^1.3.4"
   }
 }
