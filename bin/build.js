@@ -1,19 +1,37 @@
 const opentype = require('opentype.js');
 const fs = require('fs');
-const fi = require('@flaticon/flaticon-uicons/css/all/all.css')
-let params = {
-  font: './my.woff',
-  fontSize: 100,
-  decimals: 1,
-};
+const path = require('path');
 
-async function loadFont() {
+const flatIconPath='../node_modules/@flaticon/flaticon-uicons/css'
+
+const directoryPath = path.join(__dirname, flatIconPath);
+
+function listWoffFiles(dirPath, callback) {
+  fs.readdir(dirPath, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      callback(err, null);
+      return;
+    }
+
+    const woffFiles = [];
+    files.forEach(file => {
+      if (path.extname(file).toLowerCase() === '.woff') {
+        const fullPath = path.join(dirPath, file);
+        woffFiles.push(file);
+      }
+    });
+    callback(null, woffFiles);
+  });
+}
+
+async function loadFont(params) {
   const buffer = await fs.promises.readFile(params.font);
   const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
   return opentype.parse(arrayBuffer);
 }
 
-async function showGlyphs(font) {
+async function showGlyphs(font,params) {
   let unitsPerEm = font.unitsPerEm;
   let ratio = params.fontSize / unitsPerEm;
   let ascender = font.ascender;
@@ -45,4 +63,20 @@ async function showGlyphs(font) {
   console.log(`SVG files saved successfully in the folder ${dirPath}`);
 }
 
-loadFont().then(showGlyphs);
+
+listWoffFiles(directoryPath, (err, woffFiles) => {
+  if (err) {
+    console.error('Failed to list WOFF files:', err);
+  } else {
+    woffFiles.map(async i => {
+      let params = {
+        font: `${flatIconPath}/${i}`,
+        fontSize: 100,
+        decimals: 1,
+      };
+      let font = await loadFont(params);
+      await showGlyphs(font,params)
+    })
+  }
+});
+
