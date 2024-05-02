@@ -2,34 +2,25 @@ const opentype = require('opentype.js');
 const fs = require('fs');
 const path = require('path');
 
-const flatIconPath='../node_modules/@flaticon/flaticon-uicons/css'
-
+const flatIconPath='../src/assets'
 const directoryPath = path.join(__dirname, flatIconPath);
 
-function listWoffFiles(dirPath, callback) {
-  fs.readdir(dirPath, (err, files) => {
-    if (err) {
-      console.error('Error reading directory:', err);
-      callback(err, null);
-      return;
-    }
-
-    const woffFiles = [];
-    files.forEach(file => {
-      if (path.extname(file).toLowerCase() === '.woff') {
-        const fullPath = path.join(dirPath, file);
-        woffFiles.push(file);
-      }
-    });
-    callback(null, woffFiles);
-  });
+async function listWoffFiles(dirPath) {
+  try {
+    const files = await fs.promises.readdir(dirPath);
+    return files.filter(file => path.extname(file).toLowerCase() === '.woff');
+  } catch (err) {
+    console.error('Error reading directory:', err);
+    throw err;
+  }
 }
 
-async function loadFont(params) {
-  const buffer = await fs.promises.readFile(params.font);
+async function loadFont(fontPath) {
+  const buffer = await fs.promises.readFile(fontPath);
   const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
   return opentype.parse(arrayBuffer);
 }
+
 
 async function showGlyphs(font,params) {
   let unitsPerEm = font.unitsPerEm;
@@ -40,9 +31,10 @@ async function showGlyphs(font,params) {
   let keys = Object.keys(glyphs).length;
 
   let fontFamily = font.tables.name.fontFamily.en.replaceAll(" ", "_").replaceAll(".", "_");
-  let dirPath = `${fontFamily}`;
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath);
+  let outputPath = path.join(__dirname, '../src/svgs',fontFamily) ;
+
+  if (!fs.existsSync(outputPath)) {
+    fs.mkdirSync(outputPath);
   }
 
   for (let i = 0; i < keys; i++) {
@@ -56,27 +48,26 @@ async function showGlyphs(font,params) {
 
     if (pathData) {
       let glyphSvg = `<svg xmlns="http://www.w3.org/2000/svg" id="icon_${glyphId}" viewBox="0 0 ${glyphW.toFixed(params.decimals)} ${lineHeight.toFixed(params.decimals)}"><path d="${pathData}" id="path_${glyphId}" /></svg>`;
-      fs.writeFileSync(`${dirPath}/${glyphId}.svg`, glyphSvg);
+      fs.writeFileSync(`${outputPath}/${glyphId}.svg`, glyphSvg);
     }
   }
 
-  console.log(`SVG files saved successfully in the folder ${dirPath}`);
+  console.log(`SVG files saved successfully in the folder ${outputPath}`);
 }
 
 
-listWoffFiles(directoryPath, (err, woffFiles) => {
-  if (err) {
-    console.error('Failed to list WOFF files:', err);
-  } else {
-    woffFiles.map(async i => {
-      let params = {
-        font: `${flatIconPath}/${i}`,
-        fontSize: 100,
-        decimals: 1,
-      };
-      let font = await loadFont(params);
-      await showGlyphs(font,params)
-    })
-  }
-});
 
+(async () => {
+  try {
+    const woffFiles = await listWoffFiles(directoryPath);
+    for (const file of woffFiles) {
+      const params = { font: path.join(directoryPath, file), fontSize: 100, decimals: 1 };
+      const font = await loadFont(params.font);
+      await showGlyphs(font,params)
+      // const fontFamily = font.tables.name.fontFamily.en.replaceAll(" ", "_").replaceAll(".", "_");
+      // await showGlyphs(font, params, fontFamily);
+    }
+  } catch (error) {
+    console.error('Error processing WOFF files:', error);
+  }
+})();
